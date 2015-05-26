@@ -1,0 +1,72 @@
+<div class="jumbotron text-center">
+    <h1>Import CSV Train Schedule</h1>
+
+</div>
+<div class="container">
+    <div class="col-md-2 col-centered"> <ng-csv-import class="import" content="csv.content" header="csv.header" separator="csv.separator" result="csv.result" send="postData(csv.result)">
+        </ng-csv-import>
+        <button class="btn btn-default center" ng-click="postData(csv.result)">IMPORT CSV</button>
+    </div>
+</div>
+
+
+<table st-table="displayedCollection" st-safe-src="trains" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Train Line</th>
+            <th st-sort-default="true" st-sort="RUN_NUMBER">Run Number</th>
+            <th>Route Name</th>
+            <th>Operator Id</th>
+        </tr>
+        <tr>
+            <p>{{ trainLine.TRAIN_LINE }}</p>
+            <td>
+                <select class="form-control" ng-model="trainLine" required ng-options="train.TRAIN_LINE for train in trains | unique:'TRAIN_LINE'    ">
+                    <option value="">--Select Train Line--</option>
+                </select>
+            </td>
+            <td>
+                <input class="form-control" ng-model="runNumber" placeholder="Run Number" required>
+            </td>
+            <td>
+                <input class="form-control" ng-model="routeName" placeholder="Route Name" required>
+            </td>
+            <td>
+                <input class="form-control" ng-model="operatorId" placeholder="Operator Id" required>
+            </td>
+            <td>
+                <button class="btn btn-default" ng-click="save()">New Train</button>
+            </td>
+        </tr>
+        <tr ng-repeat="row in displayedCollection | orderBy:'RUN_NUMBER' | unique:'RUN_NUMBER' ">
+            <td>{{row.TRAIN_LINE | uppercase}}</td>
+            <td>{{row.RUN_NUMBER | uppercase}}</td>
+            <td>{{row.ROUTE_NAME | uppercase}}</td>
+            <td><span ng-hide="editMode">{{row.OPERATOR_ID | uppercase}}</span>
+                <input name="row.OPERATOR_ID" ng-show="editMode" type="text" ng-model="row.OPERATOR_ID">
+            </td>
+            <td>
+                <button class="btn btn-sm btn-success" ng-show="editMode" ng-click="globalConfiguration.updateTrain(row); editMode = false;"><i class="glyphicon glyphicon-ok"></i>
+                </button>
+                <button class="btn btn-sm btn-warning" ng-show="editMode" ng-click="editMode = false; globalConfiguration.cancel()"><i ng- class="glyphicon glyphicon-remove"></i>
+                </button>
+                <button class="btn btn-sm btn-info" ng-hide="editMode" ng-click="editMode = true; globslConfiguration.edit(row)"><i class="glyphicon glyphicon-pencil"></i>
+                </button>
+                <button ng-click="globalConfiguration.removeItem(row)" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove-circle"></i>
+                </button>
+
+            </td>
+        </tr>
+        <tfoot>
+            <tr>
+                <td colspan="5" class="text-center">
+                    <div st-pagination="" st-items-by-page="5" st-displayed-pages="7"></div>
+                </td>
+            </tr>
+        </tfoot>
+    </thead>
+
+</table>
+
+
+</div>
